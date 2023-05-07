@@ -1,0 +1,9 @@
+version: "3"
+services:
+  web:
+    build: .
+    container_name: dummy-products
+    ports:
+      - "80:80"
+    volumes:
+      - .:/var/www/html
