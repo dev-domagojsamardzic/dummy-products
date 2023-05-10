@@ -12,6 +12,9 @@ interface ApiInterface
     
     /* Returns a model collection */
     public function getAll(): Collection;
+
+    /* Returns paginated model collection */
+    public function paginate(int $page, int $perPage): Collection;
     
     /* Get single model */
     public function getOne(string $id): Model;

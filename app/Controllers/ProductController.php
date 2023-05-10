@@ -4,16 +4,17 @@ namespace App\Controllers;
 
 use App\Clients\ApiClient;
 use App\Clients\ProductApiClient;
-use App\Collections\Collection;
 use App\Collections\ProductCollection;
 
-class ProductController
+class ProductController extends Controller
 {
     /* API client */
     protected ApiClient $apiClient;
     
     public function __construct()
     {
+        parent::__construct();
+
         $this->apiClient = new ProductApiClient();
     }
     
@@ -23,8 +24,12 @@ class ProductController
     */
     public function index(): ProductCollection
     {
-        /* Get collection of products */
-        $result = $this->apiClient->getAll();
+        /* Get pagination parameters */
+        $page = $this->request->getQueryStringParam('page');
+        $perPage = $this->request->getQueryStringParam('per_page');
+
+        /* Get paginated collection of products */
+        $result = $this->apiClient->paginate($page, $perPage);
         
         return $result;
     }

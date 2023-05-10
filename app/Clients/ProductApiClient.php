@@ -5,6 +5,7 @@ namespace App\Clients;
 use App\Collections\ProductCollection;
 use App\Models\Model;
 use App\Models\Product;
+use App\Handlers\PaginationHandler;
 
 class ProductApiClient extends ApiClient
 {
@@ -27,6 +28,22 @@ class ProductApiClient extends ApiClient
         $collection = new ProductCollection($response);
 
         return $collection;
+    }
+
+    /**
+     * Performs a GET request and returns a paginated Product collection
+     * @return App\Collections\ProductCollection
+    */  
+    public function paginate(int $page, int $perPage): ProductCollection
+    {
+
+        $paginationHandler = new PaginationHandler($page, $perPage);
+        
+        $url = self::BASE_URL . "/products?limit=" . $paginationHandler->getLimit() . "&skip=" . $paginationHandler->getSkip();
+        
+        $response = $this->get($url);
+        
+        return new ProductCollection($response);
     }
 
     public function getOne(string $id): Model

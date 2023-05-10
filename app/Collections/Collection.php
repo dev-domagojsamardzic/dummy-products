@@ -3,7 +3,7 @@
 namespace App\Collections;
 
 use App\Interfaces\CollectionInterface;
-use App\Models\Paginator;
+use App\Models\Pagination;
 
 abstract class Collection implements CollectionInterface
 {
@@ -11,7 +11,7 @@ abstract class Collection implements CollectionInterface
     public array $items = [];
 
     /* Collection paginator */
-    public Paginator $paginator;
+    public Pagination $pagination;
 
     /**
      * Check if collection is empty

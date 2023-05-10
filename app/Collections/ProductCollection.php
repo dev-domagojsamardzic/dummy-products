@@ -3,8 +3,8 @@
 namespace App\Collections;
 
 use App\Collections\Collection;
+use App\Models\Pagination;
 use App\Models\Product;
-use App\Models\Paginator;
 
 class ProductCollection extends Collection
 {
@@ -39,6 +39,6 @@ class ProductCollection extends Collection
     */
     protected function setPaginator(int $total, int $skip, int $limit): void
     {
-        $this->paginator = new Paginator($total, $skip, $limit);
+        $this->pagination = new Pagination($total, $skip, $limit);
     }
 }
