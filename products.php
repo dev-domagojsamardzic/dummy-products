@@ -29,6 +29,11 @@
                 }
             ?>
         </div>
+        <div class="d-block">
+            <?php
+                $productCollection->pagination->links->render();
+            ?>
+        </div>
     </div>
 </body>
 </html>

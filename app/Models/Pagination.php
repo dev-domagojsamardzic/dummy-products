@@ -3,28 +3,54 @@
 namespace App\Models;
 
 use App\Models\Model;
+use App\Html\Components\Pagination\Links;
 
 class Pagination extends Model
 {
 
-    /* URL */
-    protected $url;
+    /* Current page property */
+    protected int $page;
 
-    /* Total items */
-    protected int $total;
+    /* Per page property */
+    protected int $perPage;
+
+    /* Limit property (per page) */
+    protected int $limit;
     
     /* Skip items */
     protected int $skip;
 
-    /* Limit property (per page) */
-    protected int $limit;
+    /* Total items */
+    protected int $total = 0;
 
-    public function __construct(string $url, int $total, int $skip = 0, int $limit = 10)
+    /* Pagination links */
+    public Links $links;
+
+    /**
+     * Set total property
+     * @return void 
+     */
+    public function setTotal(int $total): void
     {
-        $this->url = $url;
         $this->total = $total;
-        $this->skip = $skip;
-        $this->limit = $limit;
+    }
+
+    /**
+     * Get limit property
+     * @return int 
+     */
+    public function getLimit(): int
+    {
+        return $this->limit;
+    }
+
+    /**
+     * Get skip property
+     * @return int 
+     */
+    public static function getSkip(int $page, int $perPage): int
+    {
+        return ($page - 1) * $perPage;
     }
 
     /**

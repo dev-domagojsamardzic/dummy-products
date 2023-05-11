@@ -3,15 +3,12 @@
 namespace App\Collections;
 
 use App\Interfaces\CollectionInterface;
-use App\Models\Pagination;
 
 abstract class Collection implements CollectionInterface
 {
+
     /* Collection items */
     public array $items = [];
-
-    /* Collection paginator */
-    public Pagination $pagination;
 
     /**
      * Check if collection is empty
