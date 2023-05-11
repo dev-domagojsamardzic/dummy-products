@@ -2,7 +2,6 @@
 
 namespace App\Interfaces;
 
-use App\Collections\Collection;
 use App\Collections\PaginatedCollection;
 use App\Models\Model;
 

@@ -21,6 +21,7 @@ class ProductCollection extends PaginatedCollection
             $this->items[] = new Product($product);
         }
 
+        parent::__construct($data);
     }
 
 }

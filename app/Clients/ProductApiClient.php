@@ -21,7 +21,7 @@ class ProductApiClient extends ApiClient
     public function paginate(int $page, int $perPage): PaginatedCollection
     {
         /* Calculate skip property */
-        $skip = Pagination::getSkip($page, $perPage);
+        $skip = Pagination::calculateSkip($page, $perPage);
         
         /* Define URL */
         $url = self::BASE_URL . "/products?limit=" . $perPage . "&skip=" . $skip;

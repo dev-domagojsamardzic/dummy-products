@@ -26,13 +26,13 @@ class Pagination extends Model
     /* Pagination links */
     public Links $links;
 
-    /**
-     * Set total property
-     * @return void 
-     */
-    public function setTotal(int $total): void
+    public function __construct(int $total, int $limit = 10, int $skip = 0)
     {
         $this->total = $total;
+        $this->limit = $limit;
+        $this->skip = $skip;
+
+        $this->links = new Links($this);
     }
 
     /**
@@ -48,7 +48,16 @@ class Pagination extends Model
      * Get skip property
      * @return int 
      */
-    public static function getSkip(int $page, int $perPage): int
+    public function getSkip(): int
+    {
+        return $this->skip;
+    }
+
+    /**
+     * Calculate skip property
+     * @return int 
+     */
+    public static function calculateSkip(int $page, int $perPage): int
     {
         return ($page - 1) * $perPage;
     }
