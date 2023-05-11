@@ -17,11 +17,18 @@ class ProductCard extends Card
     {
         $this->html = '<div class="col">
                             <div class="card h-100">
-                                <img style="height:250px; overflow:hidden; object-fit:cover;" src="' . $this->model->thumbnail . '" class="card-img-top" alt="' . $this->model->title . '">
+                                <a href="product.php?id=' . $this->model->id . '">
+                                    <img style="height:250px; overflow:hidden; object-fit:cover;" src="' . $this->model->thumbnail . '" class="card-img-top" alt="' . $this->model->title . '">
+                                </a>    
                                 <div class="card-body d-flex flex-column">
-                                    <h5 class="card-title">' . $this->model->title . '</h5>
+                                    <span class="badge bg-danger position-absolute top-0 end-0 mt-2 me-2">-' . ceil($this->model->discountPercentage) . '%</span>
+                                    <a href="product.php?id=' . $this->model->id . '">
+                                        <h5 class="card-title">' . $this->model->title . '</h5>
+                                    </a>    
                                     <p class="card-text pt-2 pb-4">' . $this->model->description . '</p>
-                                    <a href="#" class="btn btn-primary justify-self-end mt-auto">View</a>
+                                    <div class="d-flex justify-content-end align-items-center justify-self-end mt-auto">
+                                        <div class="price__container fs-5">$<span class="price fw-bold">' . $this->model->price . '</span></div>
+                                    </div>
                                 </div>
                             </div>
                         </div>';

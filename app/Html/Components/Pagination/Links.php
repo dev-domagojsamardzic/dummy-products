@@ -3,43 +3,74 @@
 namespace App\Html\Components\Pagination;
 
 use App\Html\Component;
+use App\Models\Pagination;
 
 class Links extends Component
 {
-
-    public function __construct($model)
+    protected Pagination $pagination;
+    
+    public function __construct(Pagination $pagination)
     {
-        $this->model = $model;
-        
+        $this->pagination = $pagination;
         $this->generate();
     }
 
-    protected function generate()
+    /**
+     * Generate component HTML
+     * @return string
+     */
+    protected function generate(): void
     {
-        $this->html = '<nav aria-label="Page navigation example">
-                            <ul class="pagination">' 
-                                . $this->previousButton() 
-                                . $this->paginationButtons() 
-                                . $this->nextButton() . 
-                            '</ul>
-                        </nav>';
+        $this->html =   '<div class="w-full d-flex align-items-center justify-content-center py-4">
+                            <nav aria-label="Page navigation example">
+                                <ul class="pagination">' 
+                                    . $this->previousButton() 
+                                    . $this->paginationButtons() 
+                                    . $this->nextButton() . 
+                                '</ul>
+                            </nav>
+                        </div>';
     }
 
-    protected function previousButton()
+    /**
+     * Generate previous pagination button
+     * @return string
+     */
+    protected function previousButton(): string
     {
-        return '<li class="page-item"><a class="page-link" href="#">Previous</a></li>';
+        /* Check if button should be disabled disabled */
+        $disabled = ($this->pagination->getPreviousPageUrl() === null) ? 'disabled' : '';
+        return '<li class="page-item ' . $disabled . '"><a class="page-link" href="' . $this->pagination->getPreviousPageUrl() . '">Previous</a></li>';
     }
 
-    protected function paginationButtons()
+    /**
+     * Generate numeric pagination buttons
+     * @return string
+     */
+    protected function paginationButtons(): string
     {
-        return '<li class="page-item"><a class="page-link" href="#">1</a></li>
-                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                <li class="page-item"><a class="page-link" href="#">3</a></li>'; 
+        /* Init buttons array */
+        $buttons = [];
+
+        for($i = 1; $i <= $this->pagination->getMaxPages(); $i++) {
+            /* Check if button is active */
+            $active = ($this->pagination->getCurrentPage() == $i) ? 'active' : '';
+            /* Append button to array */
+            $buttons[] = '<li class="page-item ' . $active . '"><a class="page-link" href="' . $this->pagination->getPageUrl($i) . '">' . $i . '</a></li>';
+        }
+
+        return implode($buttons);
     }
 
+    /**
+     * Generate next pagination button
+     * @return string
+     */
     protected function nextButton()
     {
-        return '<li class="page-item"><a class="page-link" href="#">Next</a></li>';
+        /* Check if button should be disabled */
+        $disabled = ($this->pagination->getNextPageUrl() === null) ? 'disabled' : '';
+        return '<li class="page-item ' . $disabled . '"><a class="page-link" href="' . $this->pagination->getNextPageUrl() . '">Next</a></li>';
     }
     
 }

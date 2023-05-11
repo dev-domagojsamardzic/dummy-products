@@ -22,13 +22,11 @@ class ProductApiClient extends ApiClient
     {
         /* Calculate skip property */
         $skip = Pagination::calculateSkip($page, $perPage);
-        
         /* Define URL */
         $url = self::BASE_URL . "/products?limit=" . $perPage . "&skip=" . $skip;
-        
         /* Get request */
         $response = $this->get($url);
-
+        /* Create ProductCollection */
         $collection = new ProductCollection($response);
 
         return $collection;
@@ -36,7 +34,6 @@ class ProductApiClient extends ApiClient
 
     public function getOne(string $id): Model
     {
-
         return new Product([]);
     }
 }

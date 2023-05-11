@@ -8,20 +8,35 @@ use App\Html\Components\Pagination\Links;
 class Pagination extends Model
 {
 
-    /* Current page property */
-    protected int $page;
-
-    /* Per page property */
-    protected int $perPage;
-
-    /* Limit property (per page) */
-    protected int $limit;
-    
     /* Skip items */
     protected int $skip;
 
-    /* Total items */
-    protected int $total = 0;
+    /* Total number of items */
+    protected int $total;
+
+    /* Current page property */
+    protected int $currentPage;
+
+    /* Previous page property */
+    protected int $previousPage;
+    
+    /* Next page property */
+    protected int $nextPage;
+
+    /* Current page URL */
+    protected $currentPageUrl;
+
+    /* Previous page URL */
+    protected $previousPageUrl;
+
+    /* Next page URL */
+    protected $nextPageUrl;
+
+    /* Items per page */
+    protected int $perPage;
+
+    /* Max number of pages */
+    protected int $maxPages;
 
     /* Pagination links */
     public Links $links;
@@ -29,19 +44,87 @@ class Pagination extends Model
     public function __construct(int $total, int $limit = 10, int $skip = 0)
     {
         $this->total = $total;
-        $this->limit = $limit;
+        $this->perPage = $limit;
         $this->skip = $skip;
+        $this->currentPage = $this->setCurrentPage();
+        $this->maxPages = $this->setMaxPages();
+        $this->previousPage = $this->setPreviousPage();
+        $this->nextPage = $this->setNextPage();
+        $this->previousPageUrl = $this->setPreviousPageUrl();
+        $this->nextPageUrl = $this->setNextPageUrl();
 
         $this->links = new Links($this);
     }
 
+
     /**
-     * Get limit property
+     * Set current page property
+     * @return int
+    */
+    protected function setCurrentPage(): int
+    {
+        return ceil(($this->skip + 1) / $this->perPage);
+    }
+
+    /**
+     * Set maxPages property
+     * @return int
+    */
+    protected function setMaxPages(): int
+    {
+        return ceil($this->total / $this->perPage);
+    }
+    
+    /**
+     * Set previousPage property
+     * @return int
+    */
+    protected function setPreviousPage(): int
+    {
+        return $this->currentPage - 1;
+    }
+
+    /**
+     * Set nextPage property
+     * @return int
+    */
+    protected function setNextPage(): int
+    {
+        return $this->currentPage + 1;
+    }
+
+    /**
+     * Set previousPageUrl property
+     * @return string
+    */
+    protected function setPreviousPageUrl(): ?string
+    {    
+        if($this->previousPage == 0) {
+            return null;
+        }
+
+        return $this->getPageUrl($this->previousPage);
+    }
+
+    /**
+     * Set nextPageUrl property
+     * @return string
+    */
+    protected function setNextPageUrl(): ?string
+    {
+        if($this->nextPage > $this->maxPages) {
+            return null;
+        }
+        return $this->getPageUrl($this->nextPage);
+    }
+
+    /**
+     * Calculate skip property (static function)
      * @return int 
      */
-    public function getLimit(): int
+    public static function calculateSkip(int $page, int $perPage): int
     {
-        return $this->limit;
+        return ($page - 1) * $perPage;
     }
 
     /**
@@ -54,22 +137,21 @@ class Pagination extends Model
     }
 
     /**
-     * Calculate skip property
+     * Get skip property
      * @return int 
      */
-    public static function calculateSkip(int $page, int $perPage): int
+    public function getMaxPages(): int
     {
-        return ($page - 1) * $perPage;
+        return $this->maxPages;
     }
 
     /**
      * Get the current page number.
-     *
      * @return int
      */
     public function getCurrentPage(): int
     {
-        return ceil(($this->skip + 1) / $this->limit);
+        return $this->currentPage;
     }
 
     /**
@@ -79,11 +161,7 @@ class Pagination extends Model
      */
     public function getNextPage(): int
     {
-        if ($this->skip + $this->limit >= $this->total) {
-            return $this->getCurrentPage();
-        }
-
-        return $this->getCurrentPage() + 1;
+        return $this->nextPage;
     }
 
     /**
@@ -93,11 +171,7 @@ class Pagination extends Model
      */
     public function getPreviousPage(): int
     {
-        if ($this->skip - $this->limit < 0) {
-            return $this->getCurrentPage();
-        }
-
-        return $this->getCurrentPage() - 1;
+        return $this->previousPage;
     }
 
     /**
@@ -107,11 +181,7 @@ class Pagination extends Model
      */
     public function getNextPageUrl(): ?string
     {
-        $nextSkip = $this->skip + $this->limit;
-        if ($nextSkip >= $this->total) {
-            return null;
-        }
-        return $this->getPageUrl($nextSkip);
+        return $this->nextPageUrl;
     }
 
     /**
@@ -121,11 +191,7 @@ class Pagination extends Model
      */
     public function getPreviousPageUrl(): ?string
     {
-        $prevSkip = $this->skip - $this->limit;
-        if ($prevSkip < 0) {
-            return null;
-        }
-        return $this->getPageUrl($prevSkip);
+        return $this->previousPageUrl;
     }
 
     /**
@@ -135,7 +201,7 @@ class Pagination extends Model
      */
     public function getCurrentPageUrl(): string
     {
-        return $this->getPageUrl($this->skip);
+        return $this->getPageUrl($this->currentPage);
     }
 
     /**
@@ -144,8 +210,11 @@ class Pagination extends Model
      * @param int $skip
      * @return string
      */
-    protected function getPageUrl(int $skip): string
+    public function getPageUrl(int $page): string
     {
-        return "https://dummyjson.com/products?limit={$this->limit}&skip={$skip}";
+        /* Build base URL */
+        $baseUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://{$_SERVER['HTTP_HOST']}{$_SERVER['SCRIPT_NAME']}";
+        /* Append query string and return */
+        return $baseUrl . "?page={$page}&per_page={$this->perPage}";
     }
 }

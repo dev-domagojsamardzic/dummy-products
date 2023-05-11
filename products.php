@@ -21,7 +21,7 @@
         $productCollection = $productController->index();
     ?>
 
-    <div class="container">
+    <div class="container py-3">
         <div class="row row-cols-1 row-cols-md-3 g-4">
             <?php
                 foreach($productCollection->items as $product) {
